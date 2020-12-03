@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Initializing variables
+isRunning=0
+
+while read -u3 line; do 
+  event=${line%% *};
+  case $event in
+    node_add)
+      if [[ $(pgrep -l '^spotify$') ]]; then
+        if [[ $isRunning = 0 ]]; then
+          polybar -rq -q spotify &
+          PID=$!
+        fi
+        isRunning=1
+      fi
+    ;;
+    node_remove)
+      sleep 1 # The process is killed slightly after the node is removed
+      if [[ $isRunning = 1 && ! $(pgrep -l '^spotify$') ]]; then
+        kill -SIGKILL $PID
+        isRunning=0
+      fi
+    ;;
+  esac
+done 3< <(bspc subscribe node_add node_remove)

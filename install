@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+alacritty="$HOME/.config/alacritty/alacritty.yml"
+bspwm="$HOME/.config/bspwm/bspwmrc"
+
+# Setup function
+setup () {
+  # Backup existing files
+  if [[ -f "${1}" ]]; then
+    mv ${1} backup/ 
+  fi
+  ln -s "$PWD/$(basename ${1})" ${1}
+  #echo "Finished with $(basename ${1})"
+  #echo "$(basename ${1}) ${1}"
+}
+
+setup ${alacritty}
+setup ${bspwm}
